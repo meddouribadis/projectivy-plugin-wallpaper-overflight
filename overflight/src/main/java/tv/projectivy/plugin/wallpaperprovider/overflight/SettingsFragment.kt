@@ -44,6 +44,14 @@ class SettingsFragment : GuidedStepSupportFragment() {
             .descriptionEditable(true)
             .build()
             .also { actions.add(it) }
+
+        GuidedAction.Builder(context)
+            .id(ACTION_CACHE_TIME)
+            .title(R.string.setting_use_cache)
+            .checkSetId(GuidedAction.CHECKBOX_CHECK_SET_ID)
+            .checked(PreferencesManager.useCache)
+            .build()
+            .also { actions.add(it) }
     }
 
     override fun onGuidedActionClicked(action: GuidedAction) {
@@ -56,6 +64,7 @@ class SettingsFragment : GuidedStepSupportFragment() {
                 notifyActionChanged(findActionPositionById(ACTION_ID_VIDEO_SOURCE_URL))
                 PreferencesManager.videoSourceUrl = (params?: PreferencesManager.DEFAULT_VIDEO_SOURCE_URL).toString()
             }
+            ACTION_CACHE_TIME -> PreferencesManager.useCache = action.isChecked
         }
     }
 
@@ -63,5 +72,6 @@ class SettingsFragment : GuidedStepSupportFragment() {
         private const val ACTION_ID_VIDEO_4K = 1L
         private const val ACTION_ID_VIDEO_HDR= 2L
         private const val ACTION_ID_VIDEO_SOURCE_URL= 3L
+        private const val ACTION_CACHE_TIME = 4L
     }
 }

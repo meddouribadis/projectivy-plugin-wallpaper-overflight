@@ -23,15 +23,22 @@ object NetClientManager {
             .build()
     }
 
-    lateinit var httpClient: OkHttpClient
+    private lateinit var httpClient: OkHttpClient
 
-    fun init(context: Context) {
+    fun init(context: Context, useCache : Boolean = true) {
         TrafficStats.setThreadStatsTag(1906)
-        httpClient = OkHttpClient.Builder()
-            .cache(Cache(context.cacheDir, CACHE_SIZE))
-            .callTimeout(CALL_TIMEOUT_IN_S, TimeUnit.SECONDS)
-            .addNetworkInterceptor(CacheInterceptor())
-            .build()
+        httpClient = if (!useCache) {
+            OkHttpClient.Builder()
+                .cache(Cache(context.cacheDir, CACHE_SIZE))
+                .callTimeout(CALL_TIMEOUT_IN_S, TimeUnit.SECONDS)
+                .build()
+        } else {
+            OkHttpClient.Builder()
+                .cache(Cache(context.cacheDir, CACHE_SIZE))
+                .callTimeout(CALL_TIMEOUT_IN_S, TimeUnit.SECONDS)
+                .addNetworkInterceptor(CacheInterceptor())
+                .build()
+        }
     }
 
     fun request(url: String): String? {
@@ -42,7 +49,7 @@ object NetClientManager {
         return newCall(request)
     }
 
-    fun newCall(request: Request): String? {
+    private fun newCall(request: Request): String? {
         try {
             httpClient.newCall(request).execute().use { response ->
                 if (response.code == 200 && response.body != null) {

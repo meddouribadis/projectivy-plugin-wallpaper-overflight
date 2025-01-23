@@ -12,4 +12,5 @@
     <string name="setting_video_4k">4K</string>
     <string name="setting_video_hdr">HDR</string>
     <string name="setting_video_source">Videos source</string>
+    <string name="setting_use_cache">Use cache</string>
 </resources>

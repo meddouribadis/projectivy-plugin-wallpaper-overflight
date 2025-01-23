@@ -10,7 +10,7 @@ import com.google.gson.reflect.TypeToken
 
 object PreferencesManager {
     lateinit var preferences: SharedPreferences
-    const val DEFAULT_VIDEO_SOURCE_URL = "https://spocky.github.io/projectivy-plugin-wallpaper-overflight/videos.json"
+    const val DEFAULT_VIDEO_SOURCE_URL = "https://raw.githubusercontent.com/spocky/projectivy-plugin-wallpaper-overflight/refs/heads/main/videos.json"
 
     fun init(context: Context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -56,6 +56,10 @@ object PreferencesManager {
     var videoSourceUrl: String
         get() = PreferencesManager["video-source-url", DEFAULT_VIDEO_SOURCE_URL]
         set(value) { PreferencesManager["video-source-url"]=value }
+
+    var useCache: Boolean
+        get() = PreferencesManager["use-cache", true]
+        set(value) { PreferencesManager["use-cache"]=value }
 
     fun export(): String {
         return Gson().toJson(preferences.all)

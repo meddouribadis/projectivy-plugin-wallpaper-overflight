@@ -24,7 +24,7 @@ class WallpaperProviderService: Service() {
     override fun onCreate() {
         super.onCreate()
         PreferencesManager.init(this)
-        NetClientManager.init(this)
+        NetClientManager.init(this, PreferencesManager.useCache)
     }
 
     override fun onBind(intent: Intent): IBinder {
