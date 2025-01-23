@@ -74,7 +74,7 @@
             <!-- This sample plugin will receive time_elapsed events -->
             <meta-data
                 android:name="updateMode"
-                android:value="1"/>
+                android:value="17"/>
         </service>
 
     </application>

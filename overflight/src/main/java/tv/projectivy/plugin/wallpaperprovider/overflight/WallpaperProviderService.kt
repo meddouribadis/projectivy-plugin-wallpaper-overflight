@@ -18,8 +18,8 @@ import java.lang.reflect.Type
 
 class WallpaperProviderService: Service() {
 
-    val gson by lazy { Gson() }
-    val videoListType: Type = object : TypeToken<List<Video>>() {}.type
+    private val gson by lazy { Gson() }
+    private val videoListType: Type = object : TypeToken<List<Video>>() {}.type
 
     override fun onCreate() {
         super.onCreate()
@@ -36,8 +36,17 @@ class WallpaperProviderService: Service() {
         override fun getWallpapers(event: Event?): List<Wallpaper> {
             // Don't care about the event : as the updateMode was declared as update_mode_time_elapsed
             // We will only receive this event, so no need to filter out other events
-            return runBlocking {
-                fetchWallpapers()
+
+            return when (event) {
+                is Event.TimeElapsed -> runBlocking {
+                    fetchWallpapers()
+                }
+                is Event.LauncherIdleModeChanged -> emptyList()
+                is Event.NowPlayingChanged -> emptyList()
+                is Event.CardFocused -> emptyList()
+                is Event.ProgramCardFocused -> emptyList()
+                else -> listOf(Wallpaper("https://i.redd.it/zyt1635j9ree1.jpeg", WallpaperType.IMAGE, author = "Pixabay")
+                )
             }
         }
 
@@ -56,13 +65,13 @@ class WallpaperProviderService: Service() {
         return parseJson(jsonString)
     }
 
-    suspend fun loadJson(url: String): String? {
+    private suspend fun loadJson(url: String): String? {
         return withContext(Dispatchers.IO) {
             NetClientManager.request(url)
         }
     }
 
-    suspend fun parseJson(jsonString: String?): List<Wallpaper> {
+    private suspend fun parseJson(jsonString: String?): List<Wallpaper> {
         return withContext(Dispatchers.Default) {
             try {
                 // Parse the JSON into a list of Video objects
@@ -75,7 +84,10 @@ class WallpaperProviderService: Service() {
                 ?: emptyList()
             } catch (e: Exception) {
                 Log.e("JSON Parsing", "Error parsing JSON: $e")
-                emptyList()
+                listOf(
+                    Wallpaper("https://i.redd.it/zyt1635j9ree1.jpeg", WallpaperType.IMAGE, author = "Pixabay")
+                )
+                //emptyList()
             }
         }
     }
